@@ -7,32 +7,32 @@ orbs:
 jobs:
   e2e-tests:
     docker:
-    - image: cimg/node:16-browsers # Imagen adecuada para Node.js y Playwright
+    - image: cimg/node:16.14-browsers # Imagen adecuada para Node.js y Playwright
     resource_class: large # Se mantiene el uso de una clase de recursos 'large', ajusta según tus necesidades
     steps:
-    - checkout # Revisa el código fuente de tu repositorio
+    - checkout
     - setup_remote_docker:
         docker_layer_caching: true # Habilita la caché de capas de Docker para optimizar la ejecución
     - run:
-        name: Build Docker image # Construye la imagen de Docker
+        name: Build Docker image
         command: docker-compose build
     - run:
-        name: Run E2E Tests # Ejecuta los tests E2E en segundo plano
+        name: Run E2E Tests
         command: docker-compose up -d e2e-tests
     - run:
-        name: Run Tests in Docker container # Ejecuta los tests dentro del contenedor de Docker
+        name: Run Tests in Docker container
         command: docker exec e2e-tests npm run test:ci
     - run:
-        name: Copy test results # Copia los resultados de los tests para ser almacenados como artefactos
+        name: Copy test results
         when: always
         command: |
           docker cp e2e-tests:/app/test-results ./test-results
           docker cp e2e-tests:/app/playwright-report ./playwright-report
     - store_test_results:
-        path: test-results # Almacena los resultados de los tests
+        path: test-results
     - store_artifacts:
-        path: playwright-report # Almacena el reporte de Playwright
-        destination: playwright-report # Coloca el reporte en una ubicación de destino accesible
+        path: playwright-report
+        destination: playwright-report
 
 workflows:
   version: 2
