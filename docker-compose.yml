@@ -2,11 +2,10 @@ version: '3.8'
 
 services:
   e2e-tests:
-    image: mcr.microsoft.com/playwright:v1.28.1-focal
-    container_name: playwright-docker-demo-e2e-tests
+    build: .
+    container_name: playwright-tests
     volumes:
-      - .:/app
-    working_dir: /app
-    command: npm run test:ci
+      - ./test-results:/e2e-tests/test-results
+      - ./playwright-report:/e2e-tests/playwright-report
     environment:
       - CI=true

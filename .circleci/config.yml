@@ -1,62 +1,45 @@
-version: 2.1 # Versión de la configuración de CircleCI
+version: 2.1
 
-# Definir los orbs que vamos a usar (reutilización de código)
 orbs:
-  docker: circleci/docker@2.1.1 # Orb para interactuar con Docker
-  browser-tools: circleci/browser-tools@1.4.1 # Orb para herramientas de navegador (opcional dependiendo de los tests)
+  docker: circleci/docker@2.1.1
+  browser-tools: circleci/browser-tools@1.4.1
 
-# Definir los trabajos que CircleCI va a ejecutar
 jobs:
   e2e-tests:
-    # Definimos el trabajo para ejecutar las pruebas E2E
     docker:
-    # Usamos Docker para el trabajo
-    - image: cimg/node:16.14-browsers # Imagen base de Node.js que incluye los navegadores necesarios para Playwright
-    resource_class: large # Definimos una clase de recursos 'large', ajusta según tus necesidades (puede ser 'medium' o 'xlarge')
+    - image: mcr.microsoft.com/playwright:v1.41.0-focal
+    resource_class: large
 
     steps:
-    # Pasos que ejecutará CircleCI
-    - checkout # Clonamos el código fuente de tu repositorio
+    - checkout
 
     - setup_remote_docker:
-        docker_layer_caching: true # Activamos la caché de capas de Docker para acelerar la construcción de imágenes
+        version: 20.10.14
+        docker_layer_caching: true
 
     - run:
-        name: Build Docker image # Paso para construir la imagen de Docker
-        command: docker-compose build # Usamos docker-compose para construir la imagen
-
-    - run:
-        name: Run E2E Tests # Paso para ejecutar las pruebas E2E
-        command: docker-compose up -d e2e-tests # Iniciamos los contenedores definidos en docker-compose.yml
-
-    - run:
-        name: Run Tests in Docker container # Ejecutamos las pruebas dentro del contenedor Docker
-        command: docker exec e2e-tests npm run test:ci # Ejecutamos los tests con el comando npm en el contenedor
-
-    - run:
-        name: Copy test results # Copiamos los resultados de las pruebas
-        when: always # Asegura que este paso siempre se ejecute, incluso si los pasos anteriores fallan
+        name: Install dependencies
         command: |
-          docker cp e2e-tests:/test-results ./test-results  # Copiamos los resultados de los tests
-          docker cp e2e-tests:/playwright-report ./playwright-report  # Copiamos el reporte de Playwright
+          npm ci
+          npx playwright install chrome
+
+    - run:
+        name: Run E2E Tests
+        command: npm run test:ci
 
     - store_test_results:
-        # Almacenamos los resultados de las pruebas para visualizarlos en CircleCI
-        path: test-results # Ruta donde están los resultados de las pruebas
+        path: test-results
 
     - store_artifacts:
-        # Almacenamos los artefactos (reportes, logs, etc.)
-        path: playwright-report # Ruta donde se encuentra el reporte de Playwright
-        destination: playwright-report # Nombre que tendrá el artefacto en CircleCI
+        path: playwright-report
+        destination: playwright-report
 
-# Definimos el flujo de trabajo (workflow) para ejecutar el pipeline
+    - store_artifacts:
+        path: test-results
+        destination: test-results
+
 workflows:
-  version: 2 # Versión del workflow
-  test-and-deploy:
-    # Nombre del flujo de trabajo
+  version: 2
+  test:
     jobs:
-    - e2e-tests:
-        # Ejecutamos el trabajo e2e-tests
-        filters:
-          branches:
-            only: /.*/ # Esto hace que CircleCI ejecute el pipeline en cualquier rama
+    - e2e-tests
