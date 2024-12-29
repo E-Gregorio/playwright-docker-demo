@@ -1,0 +1,26 @@
+# Ignorar directorios comunes
+node_modules
+playwright-report
+test-results
+dist
+coverage
+logs
+
+# Ignorar configuraciones locales
+.env
+.env.local
+
+# Ignorar archivos y carpetas de control de versiones
+.git
+.gitignore
+.idea
+.vscode
+
+# Ignorar archivos temporales del sistema operativo
+*.swp
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Ignorar otros archivos innecesarios
+docker-compose.override.yml

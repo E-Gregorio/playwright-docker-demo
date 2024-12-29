@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  e2e-tests:
+    build: .
+    environment:
+      - CI=true
+      - BASE_URL=https://demoqa.com
+    volumes:
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+    shm_size: '2gb'
