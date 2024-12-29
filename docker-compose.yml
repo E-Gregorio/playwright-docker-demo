@@ -6,6 +6,6 @@ services:
       - CI=true
       - BASE_URL=https://demoqa.com
     volumes:
-      - ./test-results:/app/test-results
-      - ./playwright-report:/app/playwright-report
+      - ./test-results:/test-results
+      - ./playwright-report:/playwright-report
     shm_size: '2gb'
