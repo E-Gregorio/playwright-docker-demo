@@ -37,8 +37,8 @@ jobs:
         name: Copy test results # Copiamos los resultados de las pruebas
         when: always # Asegura que este paso siempre se ejecute, incluso si los pasos anteriores fallan
         command: |
-          docker cp e2e-tests:/app/test-results ./test-results  # Copiamos los resultados de los tests
-          docker cp e2e-tests:/app/playwright-report ./playwright-report  # Copiamos el reporte de Playwright
+          docker cp e2e-tests:/test-results ./test-results  # Copiamos los resultados de los tests
+          docker cp e2e-tests:/playwright-report ./playwright-report  # Copiamos el reporte de Playwright
 
     - store_test_results:
         # Almacenamos los resultados de las pruebas para visualizarlos en CircleCI
