@@ -1,11 +1,12 @@
 version: '3.8'
+
 services:
   e2e-tests:
-    build: .
+    image: mcr.microsoft.com/playwright:v1.28.1-focal
+    container_name: playwright-docker-demo-e2e-tests
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: npm run test:ci
     environment:
       - CI=true
-      - BASE_URL=https://demoqa.com
-    volumes:
-      - ./test-results:/test-results
-      - ./playwright-report:/playwright-report
-    shm_size: '2gb'
