@@ -42,4 +42,4 @@ workflows:
     - e2e-tests:
         filters:
           branches:
-            only: main
+            only: /.*/ # Esto permite que CircleCI ejecute el pipeline en todas las ramas
